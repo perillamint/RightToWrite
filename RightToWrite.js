@@ -9,3 +9,54 @@
 // @grant       none
 // @license     GPLv3 or later
 // ==/UserScript==
+
+// Configuration object.
+var config = {
+    "makePasswordVisible": false,
+    "removeReadonlyAttr": true,
+    "removeDisabledAttr": true,
+};
+
+function do_unlock(inputDOM) {
+    console.log(inputDOM)
+    if(config.makePasswordVisible &&
+       inputDOM.getAttribute("type").toLowerCase() === "password") {
+        console.log("Making password visible.");
+        //TODO: Change password to text.
+    }
+
+    if(config.removeReadonlyAttr && inputDOM.getAttribute("readonly") !== null) {
+        $(inputDOM).removeAttr("readonly");
+        console.log("Readonly attribute removed.");
+    }
+
+    if(config.removeDisabledAttr && inputDOM.disabled) {
+        $(inputDOM).prop("disabled", false);
+        console.log("Disabled attribute removed.");
+    }
+}
+
+function find_all_input() {
+    $("input").each(function (i, inputDOM) {
+        do_unlock(inputDOM);
+    });
+}
+
+var obs_config = {
+  childList: true,
+  characterData: true,
+  subtree: true
+};
+
+var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        var added_nodes = mutation.addedNodes;
+        for (var i = 0; i < added_nodes.length; i++) {
+            if(added_nodes[i].tagName.toLowerCase() === "input") {
+                do_unlock(added_nodes[i]);
+            }
+        }
+    });
+});
+
+observer.observe(document, obs_config);
