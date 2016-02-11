@@ -21,7 +21,6 @@ var config = {
 };
 
 function do_unlock(inputDOM) {
-    console.log(inputDOM)
     if(config.makePasswordVisible &&
        inputDOM.getAttribute("type").toLowerCase() === "password") {
         $(inputDOM).attr("type", "text");
@@ -46,17 +45,25 @@ function find_all_input(cb) {
 }
 
 var obs_config = {
-  childList: true,
-  characterData: true,
-  subtree: true
+    childList: true,
+    characterData: true,
+    subtree: true,
+    attributes: true
 };
 
 var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
-        var added_nodes = mutation.addedNodes;
-        for (var i = 0; i < added_nodes.length; i++) {
-            if(added_nodes[i].tagName.toLowerCase() === "input") {
-                do_unlock(added_nodes[i]);
+        if(mutation.type === "attributes") {
+            //Attributes
+            if(mutation.target.tagName.toLowerCase() === "input") {
+                do_unlock(mutation.target);
+            }
+        } else {
+            var added_nodes = mutation.addedNodes;
+            for (var i = 0; i < added_nodes.length; i++) {
+                if(added_nodes[i].tagName.toLowerCase() === "input") {
+                    do_unlock(added_nodes[i]);
+                }
             }
         }
     });
