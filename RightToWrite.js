@@ -10,6 +10,9 @@
 // @license     GPLv3 or later
 // ==/UserScript==
 
+//Prevent compat issue.
+this.$ = this.jQuery = jQuery.noConflict(true);
+
 // Configuration object.
 var config = {
     "makePasswordVisible": false,
