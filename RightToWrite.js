@@ -21,8 +21,8 @@ function do_unlock(inputDOM) {
     console.log(inputDOM)
     if(config.makePasswordVisible &&
        inputDOM.getAttribute("type").toLowerCase() === "password") {
-        console.log("Making password visible.");
-        //TODO: Change password to text.
+        $(inputDOM).attr("type", "text");
+        console.log("Changed password to text.");
     }
 
     if(config.removeReadonlyAttr && inputDOM.getAttribute("readonly") !== null) {
@@ -36,9 +36,9 @@ function do_unlock(inputDOM) {
     }
 }
 
-function find_all_input() {
+function find_all_input(cb) {
     $("input").each(function (i, inputDOM) {
-        do_unlock(inputDOM);
+        cb(inputDOM);
     });
 }
 
@@ -60,3 +60,6 @@ var observer = new MutationObserver(function(mutations) {
 });
 
 observer.observe(document, obs_config);
+find_all_input(function (inputDOM) {
+    do_unlock(inputDOM);
+});
